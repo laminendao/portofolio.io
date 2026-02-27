@@ -9,7 +9,7 @@ PhD candidate focused on **Explainable Artificial Intelligence (XAI)**, **statis
 [![ORCID](https://img.shields.io/badge/ORCID-A6CE39?style=for-the-badge&logo=orcid&logoColor=white)](https://orcid.org/0009-0009-9507-1955)
 [![HAL](https://img.shields.io/badge/HAL-008CBA?style=for-the-badge&logoColor=white)](https://hal.science/search/index/?q=ndao+mouhamadou+lamine)
 
-Live portfolio: [https://laminendao.github.io/](https://laminendao.github.io/) (ou ton lien réel)
+Live portfolio: [https://laminendao.github.io/page_web/](https://laminendao.github.io/page_web/)
 
 ## About Me
 
