@@ -65,56 +65,59 @@
         const newsFeed = document.getElementById('newsFeed');
         if (!newsFeed) return;
 
-        fetch('news.json', { cache: 'no-store' })
-            .then(resp => {
-                if (!resp.ok) throw new Error('news.json introuvable');
-                return resp.json();
-            })
-            .then(data => {
-                if (!Array.isArray(data) || data.length === 0) {
-                    newsFeed.innerHTML = '<p class="text-muted">Aucune actualité pour le moment.</p>';
-                    return;
-                }
+        // Priorité : localStorage (pour les ajouts récents), puis news.json
+        const raw = localStorage.getItem('newsItems');
+        const localItems = raw ? JSON.parse(raw) : [];
 
-                const sorted = data.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
-                newsFeed.innerHTML = '';
-
-                sorted.slice(0, 6).forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'col-md-6 col-lg-4';
-                    card.innerHTML = `
-                        <div class="news-card">
-                            <div class="news-date">${new Date(item.date).toLocaleDateString('fr-FR')}</div>
-                            <div class="news-title">${item.title}</div>
-                            <div class="news-text">${item.content}</div>
-                        </div>
-                    `;
-                    newsFeed.appendChild(card);
-                });
-            })
-            .catch(err => {
-                console.warn('Impossible de charger news.json, fallback localStorage', err);
-                const raw = localStorage.getItem('newsItems');
-                const local = raw ? JSON.parse(raw) : [];
-                if (!local.length) {
-                    newsFeed.innerHTML = '<p class="text-muted">Aucune actualité pour le moment.</p>';
-                    return;
-                }
-                const sorted = local.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
-                newsFeed.innerHTML = '';
-                sorted.slice(0, 6).forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'col-md-6 col-lg-4';
-                    card.innerHTML = `
-                        <div class="news-card">
-                            <div class="news-date">${new Date(item.date).toLocaleDateString('fr-FR')}</div>
-                            <div class="news-title">${item.title}</div>
-                            <div class="news-text">${item.content}</div>
-                        </div>
-                    `;
-                    newsFeed.appendChild(card);
-                });
+        if (localItems.length > 0) {
+            // Afficher les actualités locales immédiatement
+            const sorted = localItems.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+            newsFeed.innerHTML = '';
+            sorted.slice(0, 6).forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'col-md-6 col-lg-4';
+                card.innerHTML = `
+                    <div class="news-card">
+                        <div class="news-date">${new Date(item.date).toLocaleDateString('fr-FR')}</div>
+                        <div class="news-title">${item.title}</div>
+                        <div class="news-text">${item.content}</div>
+                    </div>
+                `;
+                newsFeed.appendChild(card);
             });
+        } else {
+            // Fallback sur news.json si rien en local
+            fetch('news.json', { cache: 'no-store' })
+                .then(resp => {
+                    if (!resp.ok) throw new Error('news.json introuvable');
+                    return resp.json();
+                })
+                .then(data => {
+                    if (!Array.isArray(data) || data.length === 0) {
+                        newsFeed.innerHTML = '<p class="text-muted">Aucune actualité pour le moment.</p>';
+                        return;
+                    }
+
+                    const sorted = data.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+                    newsFeed.innerHTML = '';
+                    sorted.slice(0, 6).forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'col-md-6 col-lg-4';
+                        card.innerHTML = `
+                            <div class="news-card">
+                                <div class="news-date">${new Date(item.date).toLocaleDateString('fr-FR')}</div>
+                                <div class="news-title">${item.title}</div>
+                                <div class="news-text">${item.content}</div>
+                            </div>
+                        `;
+                        newsFeed.appendChild(card);
+                    });
+                })
+                .catch(err => {
+                    console.warn('Impossible de charger news.json', err);
+                    newsFeed.innerHTML = '<p class="text-muted">Aucune actualité pour le moment.</p>';
+                });
+        }
     }
 
     // smooth scrolling de nav

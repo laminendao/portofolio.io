@@ -21,3 +21,7 @@ rad.json
 #Test results file
 TestResults.xml
 .DS_Store
+
+# News management files (sensitive data and tokens)
+news
+news.json
